@@ -286,21 +286,21 @@ class Poltergeist.WebPage
     @setCustomHeaders(allHeaders)
 
   pushFrame: (name) ->
-    return true if this.native().switchToFrame(name)
+    return true if @native().switchToFrame(name)
 
     # if switch by name fails - find index and try again
-    frame_no = this.native().evaluate(
+    frame_no = @native().evaluate(
       (frame_name) ->
         frames = document.querySelectorAll("iframe, frame")
         (idx for f, idx in frames when f?['name'] == frame_name or f?['id'] == frame_name)[0]
       , name)
-    frame_no? and this.native().switchToFrame(frame_no)
+    frame_no? and @native().switchToFrame(frame_no)
 
   popFrame: (pop_all = false)->
     if pop_all
-      this.native().switchToMainFrame()
+      @native().switchToMainFrame()
     else
-      this.native().switchToParentFrame()
+      @native().switchToParentFrame()
 
   dimensions: ->
     scroll   = @scrollPosition()
@@ -338,12 +338,12 @@ class Poltergeist.WebPage
     @sendEvent(name, x, y, button)
 
   evaluate: (fn, args...) ->
-    this.injectAgent()
-    this.native().evaluate("function() { var _result = #{this.stringifyCall(fn)};
+    @injectAgent()
+    @native().evaluate("function() { var _result = #{@stringifyCall(fn)};
       return (_result == null) ? undefined : _result; }", args...)
 
   execute: (fn, args...) ->
-    this.native().evaluate("function() { #{this.stringifyCall(fn)} }", args...)
+    @native().evaluate("function() { #{@stringifyCall(fn)} }", args...)
 
   stringifyCall: (fn) ->
     "(#{fn.toString()}).apply(this, arguments)"
